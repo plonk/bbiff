@@ -1,3 +1,6 @@
+all:
+	@echo "to install:\n\t$$ sudo make install\n"
+
 install:
 	install -m 755 bbiff /usr/local/bin
 	mkdir -p /usr/local/lib/bbiff
