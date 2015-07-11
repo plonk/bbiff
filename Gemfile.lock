@@ -1,12 +1,8 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    daemonize (0.0.1)
-    thor (0.19.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  daemonize
-  thor
