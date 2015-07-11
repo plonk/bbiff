@@ -1,4 +1,3 @@
-require 'colorize'
 require 'cgi'
 require 'active_support'
 require 'active_support/core_ext'
@@ -14,22 +13,16 @@ class Fixnum
   end
 end
 
-class String
-  def emphasize
-    "\0".underline.sub("\0", self.bold)
-  end
-end
-
 def render_name(name, email)
   if email.empty?
-    name.green.bold
+    name
   else
-    name.blue.emphasize
+    name
   end
 end
 
 def render_resno(no)
-  no.to_s.blue.emphasize
+  no.to_s
 end
 
 def render_date t

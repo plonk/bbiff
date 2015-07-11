@@ -1,11 +1,5 @@
-require 'thor'
-require 'daemonize'
 require_relative 'bbs_reader'
 require_relative 'res_format'
-require_relative 'user_screen'
-
-ITA = ['game', 48538]
-SURE = 1432755949
 
 def parse_range(str)
   if str == "all"
@@ -21,49 +15,37 @@ def parse_range(str)
   end
 end
 
-def start_polling thread
-  screen = UserScreen.new(Etc.getlogin)
+def start_polling(thread, start_no)
   loop do
-    thread.posts(parse_range("#{thread.last+1}-")).each do |post|
-      screen.write("\n")
-      screen.write(render_post(post))
+    thread.posts(parse_range("#{start_no}-")).each do |post|
+      system("notify-send", render_post(post))
     end
+    start_no = thread.last + 1
+    break if start_no >= 1000
     sleep 10
   end
 rescue Interrupt
-  puts "終了します。"
 end
 
-class Bbiff < Thor
-  desc 'list', 'スレッド一覧'
-  def list
-    ita = Bbs::C板.new(*ITA)
-    puts ita.スレ一覧
-  end
-
-  desc 'show', 'レス表示'
-  def show(range = 'all')
-    text = Bbs::C板.new(*ITA)
-      .thread(SURE)
-      .posts(parse_range(range))
-      .map { |post| render_post post }
-      .join("\n")
-    puts text
-  end
-
-  desc 'poll', '新着レス待機'
-  def poll(daemonize = nil)
-    if daemonize
-      Daemons.daemonize
-      UserScreen.new(Etc.getlogin).write "\nPID = #{Process.pid} でデーモン化されました。\n"
-    end
-    start_polling(Bbs::C板.new(*ITA).thread(SURE))
-  end
-
-  desc 'settings', '板の設定'
-  def settings
-    puts Bbs::C板.new(*ITA).設定
-  end
+def usage
+  STDERR.puts "Usage: bbiff [http://jbbs.shitaraba.net/bbs/read.cgi/CATEGORY/BOARD_ID/THREAD_ID/] [START_NUMBER]"
 end
 
-Bbiff.start(ARGV)
+def main
+  unless ARGV.size >= 1
+    usage
+    exit 1
+  end
+  url = ARGV[0]
+
+  if url =~ %r{\Ah?ttp://jbbs.shitaraba.net/bbs/read.cgi/(\w+)/(\d+)/(\d+)/?\z}
+    ita = [$1, $2.to_i]
+    sure = $3.to_i
+  end
+
+  thread = Bbs::C板.new(*ita).thread(sure)    
+  start_no = ARGV[1] ? ARGV[1].to_i : thread.last + 1
+  start_polling(thread, start_no)
+end
+
+main
