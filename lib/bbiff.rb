@@ -1,5 +1,5 @@
-require_relative 'bbs_reader'
-require_relative 'res_format'
+require_relative 'bbiff/bbs_reader'
+require_relative 'bbiff/res_format'
 
 def parse_range(str)
   if str == "all"
