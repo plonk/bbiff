@@ -19,12 +19,18 @@ def start_polling(thread, start_no)
   loop do
     thread.posts(parse_range("#{start_no}-")).each do |post|
       system("notify-send", render_post(post))
+      sleep 1
     end
     start_no = thread.last + 1
     break if start_no >= 1000
     sleep 10
   end
 rescue Interrupt
+rescue
+  STDERR.puts "error occured #{e.message}"
+  STDDER.puts "retrying..., ^C to quit"
+  sleep 3
+  start_polling(thread, start_no)
 end
 
 def usage
