@@ -8,11 +8,7 @@ notify-send コマンド
 
 ## インストール
 
-/usr/local 以下にインストールされます。
-
-	sudo make install
-
-`gem install bbiff`でインストールできるようにしたい
+`gem install bbiff` でインストールできます。
 
 ## 使い方
 
@@ -23,17 +19,13 @@ notify-send コマンド
 
 ## 開発・TODO
 
-- ちゃんと動くか確認する
-- bbiff.gemspecに名前とか説明とかを入れる
-- gemにするならMakefileはいらなくなるはず
 - .travis.ymlでテストするなら要編集
-- ライセンスのファイルを作る
 - moduleの中にまとめるべきかも
 
-### gemとして公開する方法
-`rake build`，`rake install`，`rake release`を使う．
-[https://rubygems.org/](https://rubygems.org/)でユーザー登録し，完成したと思ったら，`rake release`で公開．
-リリースごとにバージョンが上がっていないといけないので，間違ったものを公開すると，バージョンをもう一度あげて修正版を出すことになるので注意．
+## 謝辞
 
+DoG-peer さんが gem 化を手伝ってくれました。
 
+## 作者
 
+予定地 <plonk@piano.email.ne.jp>
