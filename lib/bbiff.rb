@@ -53,7 +53,7 @@ def main
     sure = $3.to_i
   end
 
-  thread = Bbs::C板.new(*ita).thread(sure)    
+  thread = Bbs::C板.new(*ita).thread(sure)
   start_no = ARGV[1] ? ARGV[1].to_i : thread.last + 1
   start_polling(thread, start_no)
 end
