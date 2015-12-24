@@ -1,6 +1,8 @@
-require 'shellwords'
-require_relative 'bbiff/bbs_reader'
-require_relative 'bbiff/res_format'
+require 'bundler'
+Bundler.require :default
+
+require 'bbiff/bbs_reader'
+require 'bbiff/res_format'
 
 def parse_range(str)
   if str == "all"
@@ -55,5 +57,3 @@ def main
   start_no = ARGV[1] ? ARGV[1].to_i : thread.last + 1
   start_polling(thread, start_no)
 end
-
-main

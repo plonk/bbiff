@@ -1,8 +1,3 @@
-require 'cgi'
-require 'active_support'
-require 'active_support/core_ext'
-require_relative 'bbs_reader'
-
 class Fixnum
   def em
     ' ' * (self*2)
