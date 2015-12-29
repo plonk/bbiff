@@ -43,6 +43,7 @@ rescue => e
 end
 
 def usage
+  STDERR.puts "bbiff version #{Bbiff::VERSION}"
   STDERR.puts "Usage: bbiff [http://jbbs.shitaraba.net/bbs/read.cgi/CATEGORY/BOARD_ID/THREAD_ID/] [START_NUMBER]"
 end
 

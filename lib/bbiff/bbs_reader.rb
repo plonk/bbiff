@@ -4,6 +4,7 @@ require 'uri'
 module Bbiff
 
 class C板
+  attr_reader :カテゴリ, :掲示板番号
   def initialize(カテゴリ, 掲示板番号)
     @カテゴリ = カテゴリ
     @掲示板番号 = 掲示板番号
@@ -59,14 +60,14 @@ class Post
 
   def self.from_line(line)
     no, name, mail, date, body, = line.split('<>')
-    Post.new(no, name, mail, date, body)
+    Post.new(no, name, mail, str2time(date), body)
   end
 
   def initialize(no, name, mail, date, body)
     @no = no.to_i
     @name = name
     @mail = mail
-    @date = str2time(date)
+    @date = date
     @body = body
   end
 
@@ -95,6 +96,7 @@ class Thread
   def dat_url
     @board.dat_url(@id)
   end
+
 
   def posts(range)
     dat_for_range(range).each_line.map do |line|
