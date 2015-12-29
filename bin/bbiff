@@ -1,4 +1,10 @@
 #!/usr/bin/env ruby
+
+begin 
+require 'bundler/setup'
+rescue LoadError
+end
+
 require 'shellwords'
 require 'bbiff'
 require 'bbiff/res_format'
