@@ -1,7 +1,7 @@
 require 'net/http'
 require 'uri'
 
-module Bbs
+module Bbiff
 
 class C板
   def initialize(カテゴリ, 掲示板番号)
