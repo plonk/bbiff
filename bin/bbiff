@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 require 'shellwords'
 require 'bbiff'
+require 'bbiff/res_format'
 
 def parse_range(str)
   if str == "all"
