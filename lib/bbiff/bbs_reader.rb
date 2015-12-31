@@ -1,6 +1,3 @@
-require 'net/http'
-require 'uri'
-
 module Bbs
 
 class C板
