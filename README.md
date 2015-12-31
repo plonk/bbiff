@@ -22,9 +22,14 @@ notify-send コマンド
 - .travis.ymlでテストするなら要編集
 - moduleの中にまとめるべきかも
 
-## 謝辞
+## リリース
 
-DoG-peer さんが gem 化を手伝ってくれました。
+ver 0.1.0
+  * gem 化した。(DoG-peer さん)
+  
+ver 0.1.2
+  * notify-send コマンドがインストールされていない場合は echo コマンド
+    を利用するようにした。(raduwen さん)
 
 ## 作者
 
