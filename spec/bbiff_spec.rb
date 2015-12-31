@@ -6,6 +6,6 @@ describe Bbiff do
   end
 
   it 'does something useful' do
-    expect(false).to eq(true)
+    expect(render_date(Time.now)).to eq('たった今')
   end
 end
