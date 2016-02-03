@@ -1,6 +1,6 @@
 require 'cgi'
 require 'active_support'
-require 'active_support/core_ext'
+require 'active_support/core_ext/numeric'
 require_relative 'bbs_reader'
 
 class Fixnum
