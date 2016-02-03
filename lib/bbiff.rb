@@ -31,7 +31,7 @@ def start_polling(thread, start_no)
 rescue Interrupt
 rescue => e
   STDERR.puts "error occured #{e.message}"
-  STDDER.puts "retrying..., ^C to quit"
+  STDERR.puts "retrying..., ^C to quit"
   sleep 3
   start_polling(thread, start_no)
 end
