@@ -1,4 +1,8 @@
 #!/usr/bin/env ruby
+
+# 開発時にリポジトリのコードが優先して読み込まれるようにする。
+$LOAD_PATH.unshift File.expand_path( '../../lib', __FILE__)
+
 require 'bbiff'
 
-# load '/usr/local/lib/bbiff/bbiff.rb'
+main
