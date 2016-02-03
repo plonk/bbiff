@@ -1,4 +1,5 @@
 require 'shellwords'
+require_relative 'bbiff/version'
 require_relative 'bbiff/bbs_reader'
 require_relative 'bbiff/res_format'
 
@@ -38,6 +39,12 @@ end
 
 def usage
   STDERR.puts "Usage: bbiff [http://jbbs.shitaraba.net/bbs/read.cgi/CATEGORY/BOARD_ID/THREAD_ID/] [START_NUMBER]"
+  
+  STDERR.puts <<"EOD"
+
+Bbiff version #{Bbiff::VERSION}
+Copyright © 2016 Yoteichi
+EOD
 end
 
 def main
