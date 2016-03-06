@@ -1,4 +1,5 @@
 require 'shellwords'
+require 'optparse'
 require_relative 'bbiff/version'
 require_relative 'bbiff/bbs_reader'
 require_relative 'bbiff/res_format'
@@ -17,9 +18,11 @@ def parse_range(str)
   end
 end
 
-def start_polling(thread, start_no)
+def start_polling(thread, start_no, command)
   default_notify_command = 'notify-send'
-  notify_send = ENV['BBIFF_NOTIFY_SEND'] || (system("which #{default_notify_command}") ? default_notify_command : 'echo')
+  notify_send = ENV['BBIFF_NOTIFY_SEND'] ||
+                command ||
+                (system("which #{default_notify_command}") ? default_notify_command : 'echo')
   loop do
     thread.posts(parse_range("#{start_no}-")).each do |post|
       system("#{notify_send} #{Shellwords.escape(render_post(post))}")
@@ -38,20 +41,30 @@ rescue => e
 end
 
 def usage
-  STDERR.puts "Usage: bbiff [http://jbbs.shitaraba.net/bbs/read.cgi/CATEGORY/BOARD_ID/THREAD_ID/] [START_NUMBER]"
-  
-  STDERR.puts <<"EOD"
+  STDERR.puts <<EOD
+Usage: bbiff [option] [http://jbbs.shitaraba.net/bbs/read.cgi/CATEGORY/BOARD_ID/THREAD_ID/] [START_NUMBER]
 
 Bbiff version #{Bbiff::VERSION}
 Copyright © 2016 Yoteichi
+--
+
+    -c, --command COMMAND   Specify notify-send command.
+    -h, --help              Display this help message.
 EOD
 end
 
 def main
-  unless ARGV.size >= 1
+  if ARGV.empty?
     usage
     exit 1
   end
+
+  command = nil
+  opt = OptionParser.new
+  opt.on('-h', '--help') { usage; exit }
+  opt.on('-c COMMAND', '--command COMMAND') { |v| command = v }
+  opt.parse!(ARGV)
+
   url = ARGV[0]
 
   if url =~ %r{\Ah?ttp://jbbs.shitaraba.net/bbs/read.cgi/(\w+)/(\d+)/(\d+)/?\z}
@@ -61,5 +74,5 @@ def main
 
   thread = Bbs::C板.new(*ita).thread(sure)
   start_no = ARGV[1] ? ARGV[1].to_i : thread.last + 1
-  start_polling(thread, start_no)
+  start_polling(thread, start_no, command)
 end
