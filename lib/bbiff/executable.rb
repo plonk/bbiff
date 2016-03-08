@@ -18,7 +18,7 @@ class Executable
   def start_polling(thread, start_no)
     loop do
       thread.posts(parse_range("#{start_no}-")).each do |post|
-        system("bbiff-show #{Shellwords.escape(post.to_s)}")
+        system('bbiff-show', post.to_s)
         sleep 1
       end
       start_no = thread.last + 1
