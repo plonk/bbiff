@@ -16,10 +16,10 @@ class Show
     end
 
     post = Bbs::Post.from_line(ARGV[0])
-    notify_send = ENV['BBIFF_NOTIFY_SEND'] ||
+    notify_send = ENV['BBIFF_NOTIFY_SEND'] || 
                   (`which #{NOTIFY_SEND}` != "" ? NOTIFY_SEND : 'echo')
-    system("#{notify_send} #{Shellwords.escape(text)}")
-
+    system("#{notify_send} #{Shellwords.escape(render_post(post))}")
+    
   rescue UsageError
     usage
   end
@@ -27,3 +27,4 @@ class Show
 end
 
 end
+
