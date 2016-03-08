@@ -20,7 +20,7 @@ class C板
       http.get(@設定URL.path)
     }
     r = 応答.body
-    return r.force_encoding("EUC-JP").encode("UTF-8")
+    return 設定をパーズする(r.force_encoding("EUC-JP").encode("UTF-8"))
   end
 
   def スレ一覧
@@ -51,6 +51,14 @@ class C板
       id, title, last = $1.to_i, $2, $3.to_i
       Thread.new(self, id, title, last)
     end
+  end
+
+  private
+
+  def 設定をパーズする(文字列)
+    文字列.each_line.map { |line|
+      line.chomp.split(/=/, 2)
+    }.to_h
   end
 end
 
