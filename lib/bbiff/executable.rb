@@ -73,14 +73,6 @@ class Executable
     puts "#{board_settings['BBS_TITLE']} − #{thread.title}(#{thread.last})"
     puts "    #{@settings.current['thread_url']}"
 
-    # 最後のレスを表示する。
-    if start_no > 1
-      out.puts "-----"
-      last = start_no - 1
-      last_post,  = thread.posts(last..last)
-      puts render_post(last_post)
-    end
-
     loop do
       out.set_line "#{thread.title}(#{thread.last}) 新着レス確認中"
 
