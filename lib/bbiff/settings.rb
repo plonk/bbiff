@@ -15,7 +15,7 @@ class Settings
   end
 
   def default
-    { 'delay_seconds' => 10 }
+    { 'delay_seconds' => 10, 'bbiff_show' => 'bbiff-show' }
   end
 
   def load
