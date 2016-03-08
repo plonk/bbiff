@@ -55,7 +55,7 @@ class C板
 end
 
 class Post
-  attr_reader :no, :name, :mail, :date, :body
+  attr_reader :no, :name, :mail, :body
 
   def self.from_line(line)
     no, name, mail, date, body, = line.split('<>')
@@ -66,12 +66,16 @@ class Post
     @no = no.to_i
     @name = name
     @mail = mail
-    @date = str2time(date)
+    @date = date
     @body = body
   end
 
+  def date
+    str2time(@date)
+  end
+
   def to_s
-    [no, name, mail, date, body].join('<>')
+    [no, name, mail, @date, body].join('<>')
   end
 
   private
