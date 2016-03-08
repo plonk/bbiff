@@ -70,6 +70,10 @@ class Post
     @body = body
   end
 
+  def to_s
+    [no, name, mail, date, body].join('<>')
+  end
+
   private
 
   def str2time(str)
