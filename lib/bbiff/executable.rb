@@ -16,12 +16,8 @@ class Executable
   end
 
   def start_polling(thread, start_no)
-    # default_notify_command = 'notify-send'
-    # notify_send = ENV['BBIFF_NOTIFY_SEND'] || (system("which #{default_notify_command}") ? default_notify_command : 'echo')
-
     loop do
       thread.posts(parse_range("#{start_no}-")).each do |post|
-        # system("#{notify_send} #{Shellwords.escape(render_post(post))}")
         system("bbiff-show #{Shellwords.escape(post.to_s)}")
         sleep 1
       end
