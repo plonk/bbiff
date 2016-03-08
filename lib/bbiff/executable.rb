@@ -88,7 +88,7 @@ class Executable
 
       start_no = thread.last + 1
       if start_no >= thread_stop
-        out.puts "#{thread.title}(#{thread.last}) スレッドストップ"
+        out.puts "スレッドストップ"
         break 
       end
 
@@ -118,6 +118,11 @@ EOD
   end
 
   def main
+    if ARGV.include?('-h') || ARGV.include?('--help')
+      usage
+      exit 1
+    end
+
     if ARGV.size < 1 && !@settings.current['thread_url']
       raise UsageError
     elsif ARGV.size < 1
@@ -127,6 +132,10 @@ EOD
 
       if url =~ %r{\Ah?ttp://jbbs.shitaraba.net/bbs/read.cgi/(\w+)/(\d+)/(\d+)/?\z}
         @settings.current['thread_url'] = url
+      else
+        puts "URLが変です"
+        usage
+        exit 1
       end
     end
 
