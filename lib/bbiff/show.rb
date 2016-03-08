@@ -7,18 +7,19 @@ class Show
   NOTIFY_SEND = 'notify-send'
 
   def usage
-    STDERR.puts 'Usage: bbiff-show RES_LINE'
+    STDERR.puts 'Usage: bbiff-show TITLE RES_LINE'
   end
 
   def main
-    if ARGV.size != 1
+    if ARGV.size != 2
       raise UsageError
     end
 
-    post = Bbs::Post.from_line(ARGV[0])
+    title = ARGV[0]
+    post = Bbs::Post.from_line(ARGV[1])
     notify_send = ENV['BBIFF_NOTIFY_SEND'] || 
                   (`which #{NOTIFY_SEND}` != "" ? NOTIFY_SEND : 'echo')
-    system("#{notify_send} #{Shellwords.escape(render_post(post))}")
+    system("#{notify_send} #{Shellwords.escape(title)} #{Shellwords.escape(render_post(post))}")
     
   rescue UsageError
     usage
