@@ -26,7 +26,7 @@ describe "レスの整形をするメソッド群" do
   it "render_bodyが動く" do
     expect(render_body("")).to eq "\n"
     expect(render_body("<br>")).to eq "    \n\n"
-    expect(render_body("&65374;")).to eq "    &65374;\n"
+    expect(render_body("&#65374;")).to eq "    ～\n"
   end
 
   it "render_postが動く" do
