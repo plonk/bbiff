@@ -34,3 +34,13 @@ describe "レスの整形をするメソッド群" do
     expect(render_post(post)).to eq "999：名無しさん：2011/11/11(金) 12:34:56\n    ほげ\n"
   end
 end
+
+describe "Fixnum extension" do
+  it "en が動く" do
+    expect(2.en).to eq "\x20\x20"
+  end
+
+  it "em が動く" do
+    expect(1.em).to eq "\x20\x20"
+  end
+end
