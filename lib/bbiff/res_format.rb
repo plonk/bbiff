@@ -40,7 +40,7 @@ def render_date t
     "#{(delta / 3600).to_i}時間前"
   # when (1.day)...Float::INFINITY
   else
-    "#{t.year}/#{t.month}/#{t.day}(#{weekday[t.wday]}) #{t.hour}:#{t.min}:#{t.sec}"
+    "%d/%d/%d(%s) %02d:%02d:%02d" % [t.year, t.month, t.day, weekday[t.wday], t.hour, t.min, t.sec]
   end
 end
 
