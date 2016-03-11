@@ -25,7 +25,7 @@ def render_resno(no)
   no.to_s
 end
 
-def render_date t
+def render_date(t)
   weekday = [*'日月火水木金土'.each_char]
   delta = Time.now - t
 
@@ -48,7 +48,7 @@ def indent(n, text)
   text.each_line.map { |line| n.en + line }.join
 end
 
-def render_body body
+def render_body(body)
   unescaped = CGI.unescapeHTML(body.gsub(/<br>/i, "\n"))
   indent(4, unescaped) + "\n"
 end
