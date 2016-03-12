@@ -63,7 +63,7 @@ class Post
   attr_reader :no, :name, :mail, :body
 
   def self.from_line(line)
-    no, name, mail, date, body, = line.split('<>')
+    no, name, mail, date, body, = line.split('<>', 6)
     Post.new(no, name, mail, date, body)
   end
 
@@ -80,7 +80,7 @@ class Post
   end
 
   def to_s
-    [no, name, mail, @date, body].join('<>')
+    [no, name, mail, @date, body, '', ''].join('<>')
   end
 
   private
