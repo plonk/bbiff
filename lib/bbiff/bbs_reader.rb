@@ -110,6 +110,7 @@ class Thread
   end
 
   def posts(range)
+    fail ArgumentError unless range.is_a? Range
     dat_for_range(range).each_line.map do |line|
       Post.from_line(line.chomp).tap do |post|
         # ついでに last を更新
