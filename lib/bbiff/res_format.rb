@@ -1,5 +1,17 @@
 require 'cgi'
+require 'active_support'
+require 'active_support/core_ext/numeric'
 require_relative 'bbs_reader'
+
+class Fixnum
+  def em
+    ' ' * (self*2)
+  end
+
+  def en
+    ' ' * self
+  end
+end
 
 def render_name(name, email)
   if email.empty?
@@ -15,11 +27,25 @@ end
 
 def render_date(t)
   weekday = [*'日月火水木金土'.each_char]
-  "%d/%d/%d(%s) %02d:%02d:%02d" % [t.year, t.month, t.day, weekday[t.wday], t.hour, t.min, t.sec]
+  delta = Time.now - t
+
+  case delta
+  when 0...1
+    "たった今"
+  when 1...(1.minute)
+    "#{delta.to_i}秒前"
+  when (1.minute)...(1.hour)
+    "#{(delta / 60).to_i}分前"
+  when (1.hour)...(24.hours)
+    "#{(delta / 3600).to_i}時間前"
+  # when (1.day)...Float::INFINITY
+  else
+    "%d/%d/%d(%s) %02d:%02d:%02d" % [t.year, t.month, t.day, weekday[t.wday], t.hour, t.min, t.sec]
+  end
 end
 
 def indent(n, text)
-  text.each_line.map { |line| ' ' * n + line }.join
+  text.each_line.map { |line| n.en + line }.join
 end
 
 def render_body(body)
