@@ -16,28 +16,18 @@ class C板
   end
 
   def 設定
-    応答 = Net::HTTP.start(@設定URL.host, @設定URL.port) { |http|
-      http.get(@設定URL.path)
-    }
-    r = 応答.body
+    r = ダウンロード(@設定URL)
     return 設定をパーズする(r.force_encoding("EUC-JP").encode("UTF-8"))
   end
 
   def スレ一覧
-    応答 = Net::HTTP.start(@スレ一覧URL.host, @スレ一覧URL.port) { |http|
-      http.get(@スレ一覧URL.path)
-    }
-    r = 応答.body
+    r = ダウンロード(@スレ一覧URL)
     return r.force_encoding("EUC-JP").encode("UTF-8")
   end
 
   def dat(スレッド番号)
     url = dat_url(スレッド番号)
-    応答 = Net::HTTP.start(url.host, url.port) { |http|
-      p url
-      http.get(url.path)
-    }
-    r = 応答.body
+    r = ダウンロード(url)
     return r.force_encoding("EUC-JP").encode("UTF-8")
   end
 
@@ -59,6 +49,13 @@ class C板
     文字列.each_line.map { |line|
       line.chomp.split(/=/, 2)
     }.to_h
+  end
+
+  def ダウンロード(url)
+    応答 = Net::HTTP.start(url.host, url.port) { |http|
+      http.get(url.path)
+    }
+    return 応答.body
   end
 end
 
