@@ -43,19 +43,19 @@ class C板
     end
   end
 
+  def ダウンロード(url)
+    応答 = Net::HTTP.start(url.host, url.port) { |http|
+      http.get(url.path)
+    }
+    return 応答.body
+  end
+
   private
 
   def 設定をパーズする(文字列)
     文字列.each_line.map { |line|
       line.chomp.split(/=/, 2)
     }.to_h
-  end
-
-  def ダウンロード(url)
-    応答 = Net::HTTP.start(url.host, url.port) { |http|
-      http.get(url.path)
-    }
-    return 応答.body
   end
 end
 
@@ -125,8 +125,7 @@ class Thread
       query = "#{range.first}-#{range.last}"
     end
     url = URI(dat_url + query)
-    res = Net::HTTP.start(url.host, url.port) { |http| http.get(url.path) }
-    res.body.force_encoding("EUC-JP").encode("UTF-8")
+    @board.ダウンロード(url).force_encoding("EUC-JP").encode("UTF-8")
   end
 end
 
