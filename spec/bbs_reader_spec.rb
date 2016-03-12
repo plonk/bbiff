@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 class Bbs::C板
-  private
   # その他のメソッドのテストの為にダウンロードメソッドを上書きする。
   #
   # カテゴリ: category
@@ -16,8 +15,11 @@ class Bbs::C板
 2.cgi,テスト(1)
 EOD
       return str.encode("EUC-JP")
-    when "/bbs/rawmode.cgi/category/1/2"
-      fail 'unimplemented'
+    when "/bbs/rawmode.cgi/category/1/2/1-1"
+      str = <<EOD
+1<>予定地<>sage<>1970/01/01(木) 09:00:00<>テスト<><>
+EOD
+      return str.encode('EUC-JP')
     when "/bbs/api/setting.cgi/category/1/"
       str = <<EOD
 TOP=http://jbbs.shitaraba.net/category/1/
@@ -70,6 +72,25 @@ describe "Bbs::C板" do
 end
 
 describe "Bbs::Thread" do
+  before do
+    @board = Bbs::C板.new('category', 1)
+    @thread = @board.thread(2)
+  end
+
+  it "基本的なアクセッサに値が入っている" do
+    expect(@thread.id).to eq 2
+    expect(@thread.title).to eq "テスト"
+    expect(@thread.last).to eq 1
+    expect(@thread.board).to eq @board
+  end
+
+  it "postsメソッド" do
+    expect( @thread.posts(1..1) ).to be_an(Array)
+    expect( @thread.posts(1..1).size ).to eq 1
+
+    expect { @thread.posts("1-") }.to raise_error(ArgumentError)
+  end
+
 end
 
 describe "Bbs::Post" do
