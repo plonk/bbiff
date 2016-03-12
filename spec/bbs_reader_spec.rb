@@ -73,4 +73,34 @@ describe "Bbs::Thread" do
 end
 
 describe "Bbs::Post" do
+  TEST_LINE = "1<>予定地<>sage<>1970/01/01(木) 09:00:00<>テスト<><>"
+
+  before do
+    @post = Bbs::Post.from_line( TEST_LINE )
+  end
+
+  it "from_lineクラスメソッドが動く" do
+    expect(@post).to be_a(Bbs::Post)
+  end
+
+  it "レス番号" do
+    expect(@post.no).to eq 1
+  end
+
+  it "名前" do
+    expect(@post.name).to eq "予定地"
+  end
+
+  it "メール" do
+    expect(@post.mail).to eq "sage"
+  end
+
+  it "日付け" do
+    expect(@post.date).to eq Time.at(0)
+  end
+
+  it "文字列に戻せる" do
+    expect(@post.to_s).to eq TEST_LINE
+  end
+
 end
