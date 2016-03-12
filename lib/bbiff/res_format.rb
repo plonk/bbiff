@@ -1,6 +1,4 @@
 require 'cgi'
-require 'active_support'
-require 'active_support/core_ext/numeric'
 require_relative 'bbs_reader'
 
 class Fixnum
@@ -32,13 +30,12 @@ def render_date(t)
   case delta
   when 0...1
     "たった今"
-  when 1...(1.minute)
+  when 1...60
     "#{delta.to_i}秒前"
-  when (1.minute)...(1.hour)
+  when 60...3600
     "#{(delta / 60).to_i}分前"
-  when (1.hour)...(24.hours)
+  when 3600...(24 * 3600)
     "#{(delta / 3600).to_i}時間前"
-  # when (1.day)...Float::INFINITY
   else
     "%d/%d/%d(%s) %02d:%02d:%02d" % [t.year, t.month, t.day, weekday[t.wday], t.hour, t.min, t.sec]
   end
