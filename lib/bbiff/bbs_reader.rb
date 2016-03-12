@@ -47,7 +47,7 @@ class C板
 
   def threads
     スレ一覧.each_line.map do |line|
-      fail FormatError unless line =~ /^(\d+)\.cgi,([^(]+)\((\d+)\)$/
+      fail 'スレ一覧のフォーマットが変です' unless line =~ /^(\d+)\.cgi,(.+?)\((\d+)\)$/
       id, title, last = $1.to_i, $2, $3.to_i
       Thread.new(self, id, title, last)
     end
