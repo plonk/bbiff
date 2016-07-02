@@ -3,6 +3,9 @@ require 'unicode/display_width'
 module Bbiff
 
 class Executable
+  class UsageError < StandardError
+  end
+
   class LineIndicator
     def initialize(out = STDOUT)
       @width = 0
@@ -119,8 +122,7 @@ EOD
 
   def main
     if ARGV.include?('-h') || ARGV.include?('--help')
-      usage
-      exit 1
+      raise UsageError
     end
 
     if ARGV.size < 1 && !@settings.current['thread_url']
@@ -147,6 +149,9 @@ EOD
     thread = Bbs::C板.new(*ita).thread(sure)
     start_no = ARGV[1] ? ARGV[1].to_i : thread.last + 1
     start_polling(thread, start_no)
+  rescue UsageError
+    usage
+    exit 1
   ensure
     @settings.save
   end
