@@ -70,7 +70,7 @@ class Executable
   def start_polling(thread, start_no)
     out = LineIndicator.new
     delay = @settings.current['delay_seconds']
-    board_settings = thread.board.設定
+    board_settings = thread.board.settings
     thread_stop = (board_settings['BBS_THREAD_STOP'] || '1000').to_i
 
     puts "#{board_settings['BBS_TITLE']} − #{thread.title}(#{thread.last})"
@@ -129,10 +129,12 @@ EOD
       raise UsageError
     elsif ARGV.size < 1
       url = @settings.current['thread_url']
+      thread = Bbs::create_thread(url)
     else
       url = ARGV[0]
 
-      if url =~ %r{\Ah?ttp://jbbs.shitaraba.net/bbs/read.cgi/(\w+)/(\d+)/(\d+)/?\z}
+      thread = Bbs::create_thread(url)
+      if thread
         @settings.current['thread_url'] = url
       else
         puts "URLが変です"
@@ -141,12 +143,6 @@ EOD
       end
     end
 
-    if url =~ %r{\Ah?ttp://jbbs.shitaraba.net/bbs/read.cgi/(\w+)/(\d+)/(\d+)/?\z}
-      ita = [$1, $2.to_i]
-      sure = $3.to_i
-    end
-
-    thread = Bbs::C板.new(*ita).thread(sure)
     start_no = ARGV[1] ? ARGV[1].to_i : thread.last + 1
     start_polling(thread, start_no)
   rescue UsageError
