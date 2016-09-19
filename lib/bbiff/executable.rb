@@ -67,10 +67,18 @@ class Executable
     end
   end
 
+  def get_board_settings(board)
+    return board.settings
+  rescue Bbs::Downloader::DownloadFailure => e
+    STDERR.puts "Warning: 以下の場所から掲示板の設定が取得できませんでした。(#{e.response.message})"
+    STDERR.puts board.settings_url
+    return {'BBS_TITLE'=>'＜不明＞'}
+  end
+
   def start_polling(thread, start_no)
     out = LineIndicator.new
     delay = @settings.current['delay_seconds']
-    board_settings = thread.board.settings
+    board_settings = get_board_settings(thread.board)
     thread_stop = (board_settings['BBS_THREAD_STOP'] || '1000').to_i
 
     puts "#{board_settings['BBS_TITLE']} − #{thread.title}(#{thread.last})"
@@ -104,7 +112,9 @@ class Executable
   rescue Interrupt
     STDERR.puts "\nユーザー割り込みにより停止"
   rescue => e
-    STDERR.puts "error occured #{e.message}"
+    STDERR.puts "error occured"
+    puts e.message
+    puts e.backtrace
     STDERR.puts "retrying..., ^C to quit"
     sleep 3
     start_polling(thread, start_no)
@@ -133,10 +143,10 @@ EOD
     else
       url = ARGV[0]
 
-      thread = Bbs::create_thread(url)
-      if thread
+      begin
+        thread = Bbs::create_thread(url)
         @settings.current['thread_url'] = url
-      else
+      rescue
         puts "URLが変です"
         usage
         exit 1

@@ -33,10 +33,36 @@ module Bbs
   end
 
   class Downloader
+    class DownloadFailure < StandardError
+      attr_reader :response
+
+      def initialize(response)
+        @response = response
+      end
+    end
+
     class Resource
       attr_reader :data
+
       def initialize(data)
-        @data = data
+        self.data = data
+      end
+
+      def data=(new_data)
+        type_check(new_data)
+        @data = new_data.dup.freeze
+      end
+
+      private
+
+      # ASCII-8BIT エンコーディングの String に限定する。
+      def type_check(data)
+        unless data.is_a? String
+          raise TypeError, 'not a string'
+        end
+        unless data.encoding == Encoding::ASCII_8BIT
+          raise ArgumentError, "encoding not ASCII-8BIT (#{data.encoding})"
+        end
       end
     end
 
@@ -53,24 +79,29 @@ module Bbs
       if resource
         Net::HTTP.start(uri.host, uri.port) do |http|
           request = Net::HTTP::Get.new(uri)
-          request['range'] = "bytes=#{resource.data.size}-"
+          request['range'] = "bytes=#{resource.data.bytesize}-"
           response = http.request(request)
+          response.body.force_encoding('ASCII-8BIT')
           pp response.code if $DEBUG
           pp response.to_hash if $DEBUG
           case response
           when Net::HTTPPartialContent
+            p :partial if $DEBUG
             resource.data += response.body
           when Net::HTTPRequestedRangeNotSatisfiable
+            p :not_satisfiable if $DEBUG
             # 多分DATは更新されていない
           when Net::HTTPOK
+            p :ok if $DEBUG
             @resource_cache[uri] = Resource.new(response.body)
             return response.body
           else
-            raise "unhandled response #{response}"
+            raise DownloadFailure.new(response)
           end
           return resource.data
         end
       else
+        p :no_resource_yet if $DEBUG
         body = download_binary_nocache(uri)
         @resource_cache[uri] = Resource.new(body)
         return body
@@ -82,19 +113,27 @@ module Bbs
       Net::HTTP.start(uri.host, uri.port) do |http|
         request = Net::HTTP::Get.new(uri)
         response = http.request(request)
-          pp response.code if $DEBUG
-          pp response.to_hash if $DEBUG
+        response.body.force_encoding('ASCII-8BIT')
+        pp response.code if $DEBUG
+        pp response.to_hash if $DEBUG
+        case response
+        when Net::HTTPOK
+        else
+          raise DownloadFailure.new(response)
+        end
       end
       return response.body
     end
 
     def download_text(uri)
-      download_binary(uri).force_encoding(encoding).encode('UTF-8')
+      # dup は重要。
+      download_binary(uri).dup.force_encoding(encoding).encode('UTF-8')
     end
   end
 
   class BoardBase
     private_class_method :new
+    attr_reader :settings_url
 
     def initialize(text_encoding)
       @downloader = Downloader.new(text_encoding)

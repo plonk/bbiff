@@ -2,7 +2,8 @@
 
 ## 必要なもの
 
-notify-send コマンド
+デスクトップに通知ポップアップを表示する、notify-send コマンド。Ubuntu
+では以下のようにインストールできます。
 
     sudo apt-get install libnotify-bin
 
@@ -14,8 +15,10 @@ notify-send コマンド
 
 	bbiff スレッドのURL レス通知を始める番号
 
-スレッドのURLは http://jbbs.shitaraba.net/bbs/read.cgi/カテゴリ/板ID/スレID/
-の形式です。
+スレッドのURLはしたらば掲示板の場合、
+`http://jbbs.shitaraba.net/bbs/read.cgi/カテゴリ/板ID/スレID/`、2ちゃ
+んねる互換掲示板の場合は、`http://ホスト名/test/read.cgi/板名/スレID/`
+のような形式になります。
 
 単に
 
@@ -23,16 +26,11 @@ notify-send コマンド
 
 とすると、前回監視したスレッドを監視します。
 
-## 開発・TODO
-
-- .travis.ymlでテストするなら要編集
-- moduleの中にまとめるべきかも
-
 ## リリース
 
 ver 0.1.0
   * gem 化した。(DoG-peer さん)
-  
+
 ver 0.1.2
   * notify-send コマンドがインストールされていない場合は echo コマンド
     を利用するようにした。(raduwen さん)
@@ -52,6 +50,10 @@ ver 0.2.1
 ver 0.2.2
   * 最後に読み込んだスレの情報が無い状態で、引数なしで bbiff を起動し
     た時にエラーになっていたのを修正。
+
+ver 0.3.0
+  * 2ちゃんねる互換掲示板に対応したつもり。
+  * 日付の相対表示を辞めた。
 
 ## 作者
 
