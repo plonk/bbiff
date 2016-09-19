@@ -5,6 +5,12 @@ require 'pp' if $DEBUG
 module Bbs
 
   class Post
+    class << self
+      def from_s(str)
+        Post.new(*str.split('<>', 5))
+      end
+    end
+
     attr_reader :no, :name, :mail, :body, :date
 
     def initialize(no, name, mail, date, body)
@@ -19,6 +25,11 @@ module Bbs
     # def deleted?
     #   @date == '＜削除＞'
     # end
+
+    def to_s
+      [no, name, mail, date, body].join('<>')
+    end
+
   end
 
   class Downloader

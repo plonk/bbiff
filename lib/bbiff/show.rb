@@ -16,7 +16,7 @@ class Show
     end
 
     title = ARGV[0]
-    post = Bbs::Post.from_line(ARGV[1])
+    post = Bbs::Post.from_s(ARGV[1])
     notify_send = ENV['BBIFF_NOTIFY_SEND'] || 
                   (`which #{NOTIFY_SEND}` != "" ? NOTIFY_SEND : 'echo')
     system("#{notify_send} #{Shellwords.escape(title)} #{Shellwords.escape(render_post(post))}")
