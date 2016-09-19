@@ -23,24 +23,6 @@ def render_resno(no)
   no.to_s
 end
 
-def render_date(t)
-  weekday = [*'日月火水木金土'.each_char]
-  delta = Time.now - t
-
-  case delta
-  when 0...1
-    "たった今"
-  when 1...60
-    "#{delta.to_i}秒前"
-  when 60...3600
-    "#{(delta / 60).to_i}分前"
-  when 3600...(24 * 3600)
-    "#{(delta / 3600).to_i}時間前"
-  else
-    "%d/%d/%d(%s) %02d:%02d:%02d" % [t.year, t.month, t.day, weekday[t.wday], t.hour, t.min, t.sec]
-  end
-end
-
 def indent(n, text)
   text.each_line.map { |line| n.en + line }.join
 end
@@ -51,7 +33,7 @@ def render_body(body)
 end
 
 def render_post(post)
-  "#{render_resno post.no}：#{render_name post.name, post.mail}：#{render_date post.date}\n" \
+  "#{render_resno post.no}：#{render_name post.name, post.mail}：#{post.date}\n" \
   "#{render_body post.body}"
 end
 
