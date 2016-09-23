@@ -169,18 +169,20 @@ EOD
       raise UsageError
     elsif ARGV.size < 1
       url = @settings.current['thread_url']
-      thread = Bbs::create_thread(url)
     else
       url = ARGV[0]
+    end
 
-      begin
-        thread = Bbs::create_thread(url)
-        @settings.current['thread_url'] = url
-      rescue
-        puts "URLが変です"
-        usage
-        exit 1
-      end
+    begin
+      thread = Bbs::create_thread(url)
+      @settings.current['thread_url'] = url
+    rescue => e
+      STDERR.puts e
+      exit 1
+    end
+    if thread.nil?
+      STDERR.puts "スレッドのURLとして解釈できませんでした。(#{url})"
+      exit 1
     end
 
     start_no = ARGV[1] ? ARGV[1].to_i : thread.last + 1

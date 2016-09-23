@@ -4,6 +4,9 @@ require 'pp' if $DEBUG
 
 module Bbs
 
+  class NotFoundError < StandardError
+  end
+
   class Post
     class << self
       def from_s(str)
@@ -304,7 +307,7 @@ module Bbs
         def from_url(url)
           uri = URI.parse(url)
           board_name = uri.path.split('/').reject(&:empty?).first
-          raise 'bad url' if board_name.nil?
+          return nil if board_name.nil?
           Board.send(:new, uri.hostname, uri.port, board_name)
         end
       end
@@ -337,10 +340,10 @@ module Bbs
             uri = URI(url)
             board = Board.send(:new, uri.hostname, uri.port, board_name)
             thread = board.thread(thread_num)
-            raise 'no such thread' if thread.nil?
+            raise NotFoundError, 'no such thread' if thread.nil?
             return thread
           else
-            raise 'bad URL'
+            return nil
           end
         end
 
