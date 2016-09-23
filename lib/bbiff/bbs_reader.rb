@@ -329,7 +329,7 @@ module Bbs
       end
     end
 
-    NICHAN_THREAD_URL_PATTERN = %r{\Ahttp://[a-zA-z\-\.]+/test/read\.cgi\/(\w+)/(\d+)($|/)}
+    NICHAN_THREAD_URL_PATTERN = %r{\Ahttp://[a-zA-z\-\.]+(?::\d+)/test/read\.cgi\/(\w+)/(\d+)($|/)}
 
     # 2ちゃんスレッド
     class Thread < ThreadBase
