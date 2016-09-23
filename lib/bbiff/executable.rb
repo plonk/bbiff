@@ -10,9 +10,12 @@ class Executable
     def initialize(out = STDOUT)
       @width = 0
       @out = out
+      @closed = false
     end
 
     def set_line(str)
+      raise_if_closed!
+
       clear
       if str[-1] == "\n"
         if str.rindex("\n") != str.size-1 || str.index("\n") < str.rindex("\n")
@@ -28,18 +31,39 @@ class Executable
     end
 
     def newline
+      raise_if_closed!
+
       @out.print "\n"
       @width = 0
     end
 
     def clear
+      raise_if_closed!
+
       @out.print "\r#{' ' * @width}\r"
       @width = 0
     end
 
     def puts(str)
+      raise_if_closed!
+
       set_line(str)
       newline
+    end
+
+    def raise_if_closed!
+      if @closed
+        raise 'Closed LineIndicator'
+      end
+    end
+
+    def close
+      if @closed
+        raise 'already closed LineIndicator'
+      else
+        @out.puts if @width > 0
+        @closed = true
+      end
     end
 
     private
@@ -75,48 +99,54 @@ class Executable
     return {'BBS_TITLE'=>'＜不明＞'}
   end
 
+  RETRY_INTERVAL_SECONDS = 3
+
   def start_polling(thread, start_no)
     out = LineIndicator.new
-    delay = @settings.current['delay_seconds']
-    board_settings = get_board_settings(thread.board)
-    thread_stop = (board_settings['BBS_THREAD_STOP'] || '1000').to_i
+    begin
+      delay = @settings.current['delay_seconds']
+      board_settings = get_board_settings(thread.board)
+      thread_stop = (board_settings['BBS_THREAD_STOP'] || '1000').to_i
 
-    puts "#{board_settings['BBS_TITLE']} − #{thread.title}(#{thread.last})"
-    puts "    #{@settings.current['thread_url']}"
+      puts "#{board_settings['BBS_TITLE']} − #{thread.title}(#{thread.last})"
+      puts "    #{@settings.current['thread_url']}"
 
-    loop do
-      out.set_line "#{thread.title}(#{thread.last}) 新着レス確認中"
+      loop do
+        out.set_line "#{thread.title}(#{thread.last}) 新着レス確認中"
 
-      thread.posts(parse_range("#{start_no}-")).each do |post|
-        out.puts "-----"
-        puts render_post(post)
+        thread.posts(parse_range("#{start_no}-")).each do |post|
+          out.puts "-----"
+          puts render_post(post)
 
-        system(@settings.current['bbiff_show'],
-               thread.title, post.to_s)
+          system(@settings.current['bbiff_show'],
+                 thread.title, post.to_s)
 
-        sleep 1
+          sleep 1
+        end
+
+        start_no = thread.last + 1
+        if start_no >= thread_stop
+          out.puts "スレッドストップ"
+          break 
+        end
+
+        delay.times do |i|
+          j = i + 1
+          out.set_line "#{thread.title}(#{thread.last}) 待機中 [#{'.'*j}#{' '*(delay - j)}]"
+          sleep 1
+        end
       end
-
-      start_no = thread.last + 1
-      if start_no >= thread_stop
-        out.puts "スレッドストップ"
-        break 
-      end
-
-      delay.times do |i|
-        j = i + 1
-        out.set_line "#{thread.title}(#{thread.last}) 待機中 [#{'.'*j}#{' '*(delay - j)}]"
-        sleep 1
-      end
+    ensure
+      out.close
     end
   rescue Interrupt
-    STDERR.puts "\nユーザー割り込みにより停止"
+    STDERR.puts "ユーザー割り込みにより停止"
   rescue => e
-    STDERR.puts "error occured"
-    puts e.message
-    puts e.backtrace
-    STDERR.puts "retrying..., ^C to quit"
-    sleep 3
+    STDERR.print "Error: "
+    STDERR.puts e.message
+    STDERR.puts e.backtrace if $DEBUG
+    STDERR.puts "#{RETRY_INTERVAL_SECONDS}秒後にリトライ"
+    sleep RETRY_INTERVAL_SECONDS
     start_polling(thread, start_no)
   end
 
