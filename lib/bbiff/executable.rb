@@ -125,7 +125,7 @@ class Executable
         end
 
         start_no = thread.last + 1
-        if start_no >= thread_stop
+        if start_no > thread_stop
           out.puts "スレッドストップ"
           break 
         end
