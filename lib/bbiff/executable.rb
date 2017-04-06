@@ -176,8 +176,11 @@ EOD
     begin
       thread = Bbs::create_thread(url)
       @settings.current['thread_url'] = url
+    rescue Bbs::Downloader::DownloadFailure => e
+      STDERR.puts "#{e.response.code} #{e.response.msg}: #{e.response.uri}"
+      exit 1
     rescue => e
-      STDERR.puts e
+      STDERR.puts e.message
       exit 1
     end
     if thread.nil?
