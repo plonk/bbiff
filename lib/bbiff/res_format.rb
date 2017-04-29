@@ -1,7 +1,7 @@
 require 'cgi'
 require_relative 'bbs_reader'
 
-class Fixnum
+class Integer
   def em
     ' ' * (self*2)
   end

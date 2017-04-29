@@ -13,10 +13,6 @@ describe "レスの整形をするメソッド群" do
     expect(render_resno(1)).to eq "1"
   end
 
-  it "render_dateが動く" do
-    expect(render_date(Time.at(0))).to eq "1970/1/1(木) 09:00:00"
-  end
-
   it "indentが動く" do
     expect(indent(0, "a")).to eq "a"
     expect(indent(1, "a")).to eq " a"
@@ -30,12 +26,12 @@ describe "レスの整形をするメソッド群" do
   end
 
   it "render_postが動く" do
-    post = Bbs::Post.from_line("999<>名無しさん<>sage<>2011/11/11(金) 12:34:56<>ほげ<><>")
+    post = Bbs::Post.new("999", "名無しさん", "sage", "2011/11/11(金) 12:34:56", "ほげ")
     expect(render_post(post)).to eq "999：名無しさん：2011/11/11(金) 12:34:56\n    ほげ\n"
   end
 end
 
-describe "Fixnum extension" do
+describe "Integer extension" do
   it "en が動く" do
     expect(2.en).to eq "\x20\x20"
   end

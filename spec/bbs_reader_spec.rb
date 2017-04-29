@@ -97,7 +97,7 @@ describe "Bbs::Post" do
   TEST_LINE = "1<>予定地<>sage<>1970/01/01(木) 09:00:00<>テスト<><>"
 
   before do
-    @post = Bbs::Post.from_line( TEST_LINE )
+    @post = Bbs::Post.new(*TEST_LINE.split('<>')[0,5])
   end
 
   it "from_lineクラスメソッドが動く" do
@@ -117,7 +117,7 @@ describe "Bbs::Post" do
   end
 
   it "日付け" do
-    expect(@post.date).to eq Time.at(0)
+    expect(@post.date).to eq "1970/01/01(木) 09:00:00"
   end
 
   it "文字列に戻せる" do
