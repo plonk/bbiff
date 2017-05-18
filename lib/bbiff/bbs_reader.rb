@@ -30,7 +30,7 @@ module Bbs
     # end
 
     def to_s
-      [no, name, mail, date, body, '', ''].join('<>')
+      [no, name, mail, date, body].join('<>')
     end
 
   end
