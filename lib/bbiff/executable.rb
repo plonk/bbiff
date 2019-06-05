@@ -156,7 +156,7 @@ class Executable
     STDERR.puts <<"EOD"
 
 Bbiff version #{Bbiff::VERSION}
-Copyright © 2016 Yoteichi
+Copyright © 2016-2019 Yoteichi
 EOD
   end
 

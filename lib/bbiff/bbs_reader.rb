@@ -208,8 +208,8 @@ module Bbs
   end
 
   module Shitaraba
-    SHITARABA_THREAD_URL_PATTERN = %r{\Ahttp://jbbs\.shitaraba\.net/bbs/read\.cgi/(\w+)/(\d+)/(\d+)(:?|\/.*)\z}
-    SHITARABA_BOARD_TOP_URL_PATTERN = %r{\Ahttp://jbbs\.shitaraba\.net/(\w+)/(\d+)/?\z}
+    SHITARABA_THREAD_URL_PATTERN = %r{\Ahttps?://jbbs\.shitaraba\.net/bbs/read\.cgi/(\w+)/(\d+)/(\d+)(:?|\/.*)\z}
+    SHITARABA_BOARD_TOP_URL_PATTERN = %r{\Ahttps?://jbbs\.shitaraba\.net/(\w+)/(\d+)/?\z}
 
     # したらば板
     class Board < Bbs::BoardBase
