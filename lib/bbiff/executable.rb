@@ -217,7 +217,7 @@ EOD
       exit 1
     end
 
-    start_no = ARGV[1] ? ARGV[1].to_i : thread.last + 1
+    start_no = args[1] ? args[1].to_i : thread.last + 1
     start_polling(thread, start_no)
   rescue UsageError
     usage
