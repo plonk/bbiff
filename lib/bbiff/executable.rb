@@ -100,7 +100,7 @@ class Executable
   end
 
   def show(title, post)
-    notify_send = ENV['BBIFF_NOTIFY_SEND'] || (`which #{NOTIFY_SEND}` != "" ? NOTIFY_SEND : 'echo')
+    notify_send = ENV['BBIFF_NOTIFY_SEND'] || (`which notify-send` != "" ? 'notify-send' : 'echo')
     system("#{notify_send} #{Shellwords.escape(title)} #{Shellwords.escape(render_post(post))}")
   end
 
@@ -128,7 +128,7 @@ class Executable
             puts render_post(post)
           end
 
-          show(thread.title, post.to_s)
+          show(thread.title, post)
         end
 
         start_no = thread.last + 1
