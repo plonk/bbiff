@@ -99,6 +99,11 @@ class Executable
     return {'BBS_TITLE'=>'＜不明＞'}
   end
 
+  def show(title, post)
+    notify_send = ENV['BBIFF_NOTIFY_SEND'] || (`which #{NOTIFY_SEND}` != "" ? NOTIFY_SEND : 'echo')
+    system("#{notify_send} #{Shellwords.escape(title)} #{Shellwords.escape(render_post(post))}")
+  end
+
   RETRY_INTERVAL_SECONDS = 3
 
   def start_polling(thread, start_no)
@@ -114,25 +119,28 @@ class Executable
       loop do
         out.set_line "#{thread.title}(#{thread.last}) 新着レス確認中"
 
-        thread.posts(parse_range("#{start_no}-")).each do |post|
+        posts = thread.posts(parse_range("#{start_no}-"),
+          { long_polling: @settings.current['long_polling'] })
+        t = Time.now
+        posts.each do |post|
           out.puts "-----"
-          puts render_post(post)
+          unless @settings.current['no_render']
+            puts render_post(post)
+          end
 
-          system(@settings.current['bbiff_show'],
-                 thread.title, post.to_s)
-
-          sleep 1
+          show(thread.title, post.to_s)
         end
 
         start_no = thread.last + 1
         if start_no > thread_stop
           out.puts "スレッドストップ"
-          break 
+          break
         end
 
-        delay.times do |i|
+        d = (delay - (Time.now - t)).to_i
+        d.times do |i|
           j = i + 1
-          out.set_line "#{thread.title}(#{thread.last}) 待機中 [#{'.'*j}#{' '*(delay - j)}]"
+          out.set_line "#{thread.title}(#{thread.last}) 待機中 [#{'.'*j}#{' '*(d - j)}]"
           sleep 1
         end
       end
@@ -152,7 +160,7 @@ class Executable
 
   def usage
     STDERR.puts "Usage: bbiff [http://jbbs.shitaraba.net/bbs/read.cgi/CATEGORY/BOARD_ID/THREAD_ID/] [START_NUMBER]"
-    
+
     STDERR.puts <<"EOD"
 
 Bbiff version #{Bbiff::VERSION}
@@ -161,16 +169,37 @@ EOD
   end
 
   def main
-    if ARGV.include?('-h') || ARGV.include?('--help')
-      raise UsageError
+    args = []
+    ARGV.each do |arg|
+      case arg
+      when '-h', '--help'
+        raise UsageError
+      when '--no-render'
+        @settings.current['no_render'] = true
+      when '--debug'
+        $DEBUG = true
+      when '--long-polling'
+        @settings.current['long_polling'] = true
+      when /\A--delay-seconds=(.+)\z/
+        s = $1
+        if s =~ /\A\d+\z/
+          @settings.current['delay_seconds'] = s.to_i
+        else
+          STDERR.puts "delay-seconds must be a non-negative integer"
+          raise UsageError
+        end
+      when /\A-/
+        STDERR.puts "invalid option #{arg.inspect}"
+        raise UsageError
+      else
+        args << arg
+      end
     end
 
-    if ARGV.size < 1 && !@settings.current['thread_url']
+    if args.size < 1
       raise UsageError
-    elsif ARGV.size < 1
-      url = @settings.current['thread_url']
     else
-      url = ARGV[0]
+      url = args[0]
     end
 
     begin
@@ -193,8 +222,6 @@ EOD
   rescue UsageError
     usage
     exit 1
-  ensure
-    @settings.save
   end
 end
 

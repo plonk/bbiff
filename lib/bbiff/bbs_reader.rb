@@ -1,6 +1,5 @@
 require 'net/http'
 require 'uri'
-require 'pp' if $DEBUG
 
 module Bbs
 
@@ -79,14 +78,15 @@ module Bbs
     # ASCII-8BIT エンコーディングの文字列を返す。
     def download_binary(uri)
       resource = @resource_cache[uri]
-      if resource
+      if resource && resource.data.size > 0
+
         Net::HTTP.start(uri.host, uri.port) do |http|
           request = Net::HTTP::Get.new(uri)
           request['range'] = "bytes=#{resource.data.bytesize}-"
           response = http.request(request)
           response.body.force_encoding('ASCII-8BIT')
-          pp response.code if $DEBUG
-          pp response.to_hash if $DEBUG
+          p response.code if $DEBUG
+          p response.to_hash if $DEBUG
           case response
           when Net::HTTPPartialContent
             p :partial if $DEBUG
@@ -117,8 +117,8 @@ module Bbs
         request = Net::HTTP::Get.new(uri)
         response = http.request(request)
         response.body.force_encoding('ASCII-8BIT')
-        pp response.code if $DEBUG
-        pp response.to_hash if $DEBUG
+        p response.code if $DEBUG
+        p response.to_hash if $DEBUG
         case response
         when Net::HTTPOK
         else
@@ -272,7 +272,7 @@ module Bbs
         super
       end
 
-      def posts(range)
+      def posts(range, opts = {})
         fail ArgumentError unless range.is_a? Range
         dat_for_range(range).each_line.map do |line|
           post = create_post(line.chomp)
@@ -360,10 +360,15 @@ module Bbs
         super
       end
 
-      def posts(range)
+      def posts(range, opts = {})
         fail ArgumentError unless range.is_a? Range
         url = URI(dat_url)
-        lines = @board.send(:download_text, url)
+        lines = @board.send(:download_text,
+                            if opts[:long_polling] then
+                              url + "?long_polling=1"
+                            else
+                              url
+                            end)
         ary = []
         lines.each_line.with_index(1) do |line, res_no|
           next unless range.include?(res_no)
