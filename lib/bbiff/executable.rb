@@ -19,7 +19,7 @@ class Executable
       clear
       if str[-1] == "\n"
         if str.rindex("\n") != str.size-1 || str.index("\n") < str.rindex("\n")
-          raise 'multiline' 
+          raise 'multiline'
         end
 
         @out.print str
