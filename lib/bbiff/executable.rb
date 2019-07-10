@@ -137,7 +137,7 @@ class Executable
           break
         end
 
-        d = (delay - (Time.now - t)).to_i
+        d = [delay-(Time.now-t), 0].max.round
         d.times do |i|
           j = i + 1
           out.set_line "#{thread.title}(#{thread.last}) 待機中 [#{'.'*j}#{' '*(d - j)}]"
