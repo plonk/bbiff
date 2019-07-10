@@ -6,6 +6,9 @@ module Bbs
   class NotFoundError < StandardError
   end
 
+  class FormatError < StandardError
+  end
+
   class Post
     class << self
       def from_s(str)
@@ -373,7 +376,11 @@ module Bbs
         lines.each_line.with_index(1) do |line, res_no|
           next unless range.include?(res_no)
 
-          name, mail, date, body, title = line.chomp.split('<>', 5)
+          fields = line.chomp.split('<>', 5)
+          if fields.size != 5
+            raise FormatError, "invalid line #{line.inspect}"
+          end
+          name, mail, date, body, title = fields
           post = Post.new(res_no.to_s, name, mail, date, body)
           ary << post
           @last = [post.no, last].max
