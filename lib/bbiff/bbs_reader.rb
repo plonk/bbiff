@@ -329,14 +329,14 @@ module Bbs
       end
     end
 
-    NICHAN_THREAD_URL_PATTERN = %r{\Ahttp://[a-zA-z\-\.]+/test/read\.cgi\/(\w+)/(\d+)($|/)}
+    NICHAN_THREAD_URL_PATTERN = %r{\Ahttp://[a-zA-z\-\.]+(:\d+)?/test/read\.cgi\/(\w+)/(\d+)($|/)}
 
     # 2ちゃんスレッド
     class Thread < ThreadBase
       class << self
         def from_url(url)
           if url.to_s =~ NICHAN_THREAD_URL_PATTERN
-            board_name, thread_num = $1, $2.to_i
+            board_name, thread_num = $2, $3.to_i
             uri = URI(url)
             board = Board.send(:new, uri.hostname, uri.port, board_name)
             thread = board.thread(thread_num)
