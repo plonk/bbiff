@@ -1,6 +1,3 @@
-require 'fileutils'
-require 'toml'
-
 module Bbiff
 
   class Settings

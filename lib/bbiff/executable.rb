@@ -160,12 +160,18 @@ class Executable
   end
 
   def usage
-    STDERR.puts "Usage: bbiff [http://jbbs.shitaraba.net/bbs/read.cgi/CATEGORY/BOARD_ID/THREAD_ID/] [START_NUMBER]"
+    STDERR.puts "Usage: bbiff [OPTIONS] [http://jbbs.shitaraba.net/bbs/read.cgi/CATEGORY/BOARD_ID/THREAD_ID/] [START_NUMBER]"
 
     STDERR.puts <<"EOD"
 
 Bbiff version #{Bbiff::VERSION}
 Copyright © 2016-2019 Yoteichi
+
+          -h, --help
+          --no-render
+          --debug
+          --long-polling (for Genkai)
+          --delay-seconds=N
 EOD
   end
 

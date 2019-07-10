@@ -7,6 +7,10 @@
 
     sudo apt-get install libnotify-bin
 
+`BBIFF_NOTIFY_SEND` 環境変数をセットすることで、notify-send 以外のコマ
+ンドをレスの通知に使うこともできます。１つ目の引数にはスレッドタイトル
+が、2つ目の引数には投稿の内容が渡されます。
+
 ## インストール
 
 `gem install bbiff` でインストールできます。
@@ -19,12 +23,6 @@
 `http://jbbs.shitaraba.net/bbs/read.cgi/カテゴリ/板ID/スレID/`、2ちゃ
 んねる互換掲示板の場合は、`http://ホスト名/test/read.cgi/板名/スレID/`
 のような形式になります。
-
-単に
-
-	bbiff
-
-とすると、前回監視したスレッドを監視します。
 
 ## リリース
 
@@ -67,6 +65,14 @@ ver 0.3.3
 
 ver 0.3.4
   * 通知でレスの最後に <><> が表示されるのを修正。
+
+ver 0.3.5
+  * httpsなしたらば掲示板のURLが使えるようにした。
+
+ver 0.4.0
+  * ロングポーリングに対応。(--long-pollingオプション)
+  * スタンドアローンなレンダリングの抑制。(--no-renderオプション)
+  * 設定ファイル(~/.config/bbiff/settings.tml)を廃止した。
 
 ## 作者
 
