@@ -74,6 +74,9 @@ ver 0.4.0
   * スタンドアローンなレンダリングの抑制。(--no-renderオプション)
   * 設定ファイル(~/.config/bbiff/settings.tml)を廃止した。
 
+ver 0.4.1
+  * ロングポーリング時のタイムアウトで無言で即リトライ。
+
 ## 作者
 
 予定地 <plonk@piano.email.ne.jp>
