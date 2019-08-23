@@ -366,12 +366,20 @@ module Bbs
       def posts(range, opts = {})
         fail ArgumentError unless range.is_a? Range
         url = URI(dat_url)
-        lines = @board.send(:download_text,
-                            if opts[:long_polling] then
-                              url + "?long_polling=1"
-                            else
-                              url
-                            end)
+        begin
+          lines = @board.send(:download_text,
+                              if opts[:long_polling] then
+                                url + "?long_polling=1"
+                              else
+                                url
+                              end)
+        rescue Net::ReadTimeout => e
+          if opts[:long_polling]
+            retry
+          else
+            raise e
+          end
+        end
         ary = []
         lines.each_line.with_index(1) do |line, res_no|
           next unless range.include?(res_no)
