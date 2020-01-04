@@ -158,19 +158,29 @@ class Executable
     retry
   end
 
+  COPYRIGHT = "Copyright © 2016-2020 Yoteichi"
+  
   def usage
     STDERR.puts "Usage: bbiff [OPTIONS] [http://jbbs.shitaraba.net/bbs/read.cgi/CATEGORY/BOARD_ID/THREAD_ID/] [START_NUMBER]"
 
     STDERR.puts <<"EOD"
 
 Bbiff version #{Bbiff::VERSION}
-Copyright © 2016-2019 Yoteichi
+#{COPYRIGHT}
 
           -h, --help
+          -v, --version
           --no-render
           --debug
           --long-polling (for Genkai)
           --delay-seconds=N
+EOD
+  end
+
+  def version
+    STDERR.puts <<"EOD"
+Bbiff version #{Bbiff::VERSION}
+#{COPYRIGHT}
 EOD
   end
 
@@ -180,6 +190,9 @@ EOD
       case arg
       when '-h', '--help'
         raise UsageError
+      when '-v', '--version'
+        version
+        exit 0
       when '--no-render'
         @settings.current['no_render'] = true
       when '--debug'
