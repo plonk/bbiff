@@ -155,8 +155,7 @@ class Executable
     STDERR.puts e.backtrace if $DEBUG
     STDERR.puts "#{RETRY_INTERVAL_SECONDS}秒後にリトライ"
     sleep RETRY_INTERVAL_SECONDS
-    thread = Bbs::create_thread(@settings.current['thread_url'])
-    start_polling(thread, start_no)
+    retry
   end
 
   def usage
