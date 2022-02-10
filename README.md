@@ -82,4 +82,4 @@ ver 0.4.2
 
 ## 作者
 
-予定地 <plonk@piano.email.ne.jp>
+予定地 <plonk.yote1@gmail.com>

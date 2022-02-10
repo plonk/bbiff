@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.name          = "bbiff"
   spec.version       = Bbiff::VERSION
   spec.authors       = ["Yoteichi"]
-  spec.email         = ["plonk@piano.email.ne.jp"]
+  spec.email         = ["plonk.yote1@gmail.com"]
 
   spec.summary       = %q{notifies new post arrival on the Shitaraba BBS.}
   spec.homepage      = "https://github.com/plonk/bbiff"

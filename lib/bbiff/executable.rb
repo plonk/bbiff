@@ -158,7 +158,7 @@ class Executable
     retry
   end
 
-  COPYRIGHT = "Copyright © 2016-2020 Yoteichi"
+  COPYRIGHT = "Copyright © 2016-2022 Yoteichi"
   
   def usage
     STDERR.puts "Usage: bbiff [OPTIONS] [http://jbbs.shitaraba.net/bbs/read.cgi/CATEGORY/BOARD_ID/THREAD_ID/] [START_NUMBER]"
