@@ -184,6 +184,68 @@ Bbiff version #{Bbiff::VERSION}
 EOD
   end
 
+  def watch_board(board)
+    out = LineIndicator.new
+    begin
+      delay = @settings.current['delay_seconds']
+      board_settings = get_board_settings(board)
+
+      lasts = {}
+      threads = board.threads
+      threads.each do |thread|
+        lasts[thread.id] = thread.last
+      end
+      puts "#{board_settings['BBS_TITLE']} − 全スレッド監視"
+      puts "    #{lasts.size}個のスレッド"
+      puts ""
+
+      queue = []
+
+      loop do
+        out.set_line "新着レス確認中"
+
+        threads = board.threads
+        threads.each do |thread|
+          if lasts[thread.id].nil?
+            queue.push(*thread.posts(1..Float::INFINITY))
+          elsif lasts[thread.id] < thread.last
+            queue.push(*thread.posts((lasts[thread.id] + 1) .. thread.last))
+          end
+          lasts[thread.id] = thread.last
+        end
+
+        t = Time.now
+        until queue.empty?
+          post = queue.shift
+          out.puts "-----"
+          unless @settings.current['no_render']
+            puts render_post(post)
+          end
+
+          show(board_settings['BBS_TITLE'], post)
+        end
+
+        d = [delay-(Time.now-t), 0].max.round
+        d.times do |i|
+          j = i + 1
+          out.set_line "待機中 [#{'.'*j}#{' '*(d - j)}]"
+          sleep 1
+        end
+      end
+    ensure
+      out.close
+    end
+  rescue Interrupt
+    STDERR.puts "ユーザー割り込みにより停止"
+  rescue => e
+    STDERR.print "Error: "
+    STDERR.puts e.message
+    STDERR.puts e.backtrace if $DEBUG
+    STDERR.puts "#{RETRY_INTERVAL_SECONDS}秒後にリトライ"
+    sleep RETRY_INTERVAL_SECONDS
+    retry
+  end
+
   def main
     args = []
     ARGV.each do |arg|
@@ -232,8 +294,21 @@ EOD
       exit 1
     end
     if thread.nil?
-      STDERR.puts "スレッドのURLとして解釈できませんでした。(#{url})"
-      exit 1
+      begin
+        board = Bbs::create_board(url)
+      rescue Bbs::Downloader::DownloadFailure => e
+        STDERR.puts "#{e.response.code} #{e.response.msg}: #{e.response.uri}"
+        exit 1
+      rescue => e
+        STDERR.puts e.message
+        exit 1
+      end
+      if board.nil?
+        STDERR.puts "板のURLとして解釈できませんでした。(#{url})"
+        exit 1
+      end
+      watch_board(board)
+      return
     end
 
     start_no = args[1] ? args[1].to_i : thread.last + 1

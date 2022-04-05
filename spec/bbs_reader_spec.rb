@@ -120,7 +120,7 @@ describe "Bbs::Post" do
     expect(@post.mail).to eq "sage"
   end
 
-  it "日付け" do
+  it "日付" do
     expect(@post.date).to eq "1970/01/01(木) 09:00:00"
   end
 

@@ -79,9 +79,9 @@ module Bbs
     end
 
     # ASCII-8BIT エンコーディングの文字列を返す。
-    def download_binary(uri)
+    def download_binary(uri, opts = {})
       resource = @resource_cache[uri]
-      if resource && resource.data.size > 0
+      if !opts[:no_cache] && resource && resource.data.size > 0
 
         Net::HTTP.start(uri.host, uri.port) do |http|
           request = Net::HTTP::Get.new(uri)
@@ -131,9 +131,9 @@ module Bbs
       return response.body
     end
 
-    def download_text(uri)
+    def download_text(uri, opts = {})
       # dup は重要。
-      download_binary(uri).dup.force_encoding(encoding).encode('UTF-8')
+      download_binary(uri, opts).dup.force_encoding(encoding).encode('UTF-8')
     end
   end
 
@@ -154,7 +154,7 @@ module Bbs
     end
 
     def thread_list
-      return download_text(@thread_list_url)
+      return download_text(@thread_list_url, no_cache: true)
     end
 
     def dat(thread_num)
@@ -178,12 +178,12 @@ module Bbs
 
     protected
 
-    def download_binary(url)
-      @downloader.download_binary(url)
+    def download_binary(url, opts = {})
+      @downloader.download_binary(url, opts)
     end
 
-    def download_text(url)
-      @downloader.download_text(url)
+    def download_text(url, opts = {})
+      @downloader.download_text(url, opts)
     end
 
     def parse_settings(string)
